@@ -1,0 +1,4 @@
+name = "BuildkiteUtils"
+uuid = "82f577da-a64f-4709-b926-88c56b51bf4b"
+authors = ["Simon Byrne <simonbyrne@gmail.com>"]
+version = "0.1.0"

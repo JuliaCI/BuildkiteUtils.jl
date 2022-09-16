@@ -1,0 +1,23 @@
+env:
+  JULIA_VERSION: "1.8.1"
+  OPENBLAS_NUM_THREADS: 1
+
+agents:
+  config: cpu
+  queue: central
+  slurm_ntasks: 1
+
+steps:
+  - label: "Run tests"
+    command:
+      - "echo $$JULIA_DEPOT_PATH"
+
+      - echo "--- Instantiate project"
+      - "julia --project -e 'using Pkg; Pkg.instantiate(;verbose=true)'"
+      - "julia --project -e 'using Pkg; Pkg.status()'"
+      - "julia --project -e 'using Pkg; Pkg.test()'"
+
+    agents:
+      slurm_cpus_per_task: 2
+    env:
+      JULIA_NUM_PRECOMPILE_TASKS: 2
