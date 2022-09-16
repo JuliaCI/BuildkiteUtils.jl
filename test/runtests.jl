@@ -1,9 +1,12 @@
-using BuildkiteUtils
+using BuildkiteUtils, Test
 
-@show BuildkiteUtils.agent()
+@test success(`$(BuildkiteUtils.agent()) --version`)
 
-@show keys(BuildkiteUtils.METADATA)
+@test isempty(keys(BuildkiteUtils.METADATA))
+
 BuildkiteUtils.METADATA["aa"] = "hello"
 
-@show keys(BuildkiteUtils.METADATA)
-@show BuildkiteUtils.METADATA["aa"]
+@test keys(BuildkiteUtils.METADATA) == ["aa"]
+@test BuildkiteUtils.METADATA["aa"] == "hello"
+
+BuildkiteUtils.METADATA["bb"]
