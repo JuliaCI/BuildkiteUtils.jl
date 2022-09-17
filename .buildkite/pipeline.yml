@@ -1,3 +1,6 @@
+agents:
+  queue: juliaecosystem
+
 steps:
   - label: "Julia 1"
     plugins:
