@@ -9,4 +9,3 @@ BuildkiteUtils.METADATA["aa"] = "hello"
 @test keys(BuildkiteUtils.METADATA) == ["aa"]
 @test BuildkiteUtils.METADATA["aa"] == "hello"
 
-BuildkiteUtils.METADATA["bb"]
