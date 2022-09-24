@@ -18,7 +18,9 @@ using Plots
     dir = mktempdir()
     png(p, joinpath(dir, "sinx.png"))
 
-    BuildkiteUtils.artifact_upload("*.png")
+    cd(dir) do
+        BuildkiteUtils.artifact_upload("*.png")
+    end
 
     newdir = mktempdir()
     BuildkiteUtils.artifact_download("*.png", newdir)
