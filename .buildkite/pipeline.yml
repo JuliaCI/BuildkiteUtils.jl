@@ -1,10 +1,10 @@
 agents:
   queue: juliaecosystem
   arch: x86_64
-  os: linux
 
 steps:
-  - label: "Julia 1"
+  - label: ":linux:"
+    key: "linux"
     plugins:
       - JuliaCI/julia#v1:
           version: "1"
@@ -13,3 +13,20 @@ steps:
     timeout_in_minutes: 60
     # Don't run Buildkite if the commit message includes the text [skip tests]
     if: build.message !~ /\[skip tests\]/
+    agents:
+      os: linux
+
+  - wait
+
+  - label: ":windows:"
+    key: "windows"
+    plugins:
+      - JuliaCI/julia#v1:
+          version: "1"
+      - JuliaCI/julia-test#v1:
+          coverage: false
+    timeout_in_minutes: 60
+    # Don't run Buildkite if the commit message includes the text [skip tests]
+    if: build.message !~ /\[skip tests\]/
+    agents:
+      os: windows
