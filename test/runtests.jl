@@ -58,8 +58,8 @@ using Plots
         end
 
         @test sort(BuildkiteUtils.artifact_search()) == sort(["sin x.png", "extra/linux.txt", "extra\\windows.txt"])
-        @test sort(BuildkiteUtils.artifact_search(); step="linux") == sort(["sin x.png", "extra/linux.txt"])
-        @test sort(BuildkiteUtils.artifact_search(); step="windows") == sort(["extra\\windows.txt"])
+        @test sort(BuildkiteUtils.artifact_search(; step="linux")) == sort(["sin x.png", "extra/linux.txt"])
+        @test sort(BuildkiteUtils.artifact_search(; step="windows")) == sort(["extra\\windows.txt"])
 
         newdir = mktempdir()
         BuildkiteUtils.artifact_download("*.png", newdir; step="linux")
@@ -69,14 +69,15 @@ end
 
 @testset "annotation" begin
     if step == "linux"
+        BuildkiteUtils.annotate("Hello from :linux:\n")
         BuildkiteUtils.annotate("""
-        Hello from :linux:
+        Success
 
         <img src="artifact://sin x.png" alt="sin(x)" height=250 >
+        """; style="success", context="xtra")
 
-        """)
-        BuildkiteUtils.annotate("Success"; style="success", context="xtra")
     elseif step == "windows"
         BuildkiteUtils.annotate("and from :windows:\n"; append=true)
+
     end
 end
