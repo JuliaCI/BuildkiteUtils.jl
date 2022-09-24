@@ -4,6 +4,18 @@ agents:
 
 steps:
   - label: "Julia 1"
+    key: "stage1"
+    plugins:
+      - JuliaCI/julia#v1:
+          version: "1"
+      - JuliaCI/julia-test#v1:
+          coverage: false
+    timeout_in_minutes: 60
+    # Don't run Buildkite if the commit message includes the text [skip tests]
+    if: build.message !~ /\[skip tests\]/
+
+  - label: "Julia 1: following"
+    key: "stage2"
     plugins:
       - JuliaCI/julia#v1:
           version: "1"

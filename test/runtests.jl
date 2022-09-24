@@ -1,36 +1,41 @@
 using BuildkiteUtils, Test
 
+stage = get(ENV,"BUILDKITE_STEP_KEY","stage1")
+
 @test success(`$(BuildkiteUtils.agent()) --version`)
 
-@testset "meta-data" begin
-    @test isempty(keys(BuildkiteUtils.METADATA))
+if stage == "stage1"
 
-    BuildkiteUtils.METADATA["aa"] = "hello"
+    @testset "meta-data" begin
+        @test isempty(keys(BuildkiteUtils.METADATA))
 
-    @test keys(BuildkiteUtils.METADATA) == ["aa"]
-    @test BuildkiteUtils.METADATA["aa"] == "hello"
-end
+        BuildkiteUtils.METADATA["aa"] = "hello"
 
-using Plots
-
-@testset "artifact" begin
-    p = plot(sin, (-3,3))
-    dir = mktempdir()
-    png(p, joinpath(dir, "sin x.png"))
-
-    cd(dir) do
-        BuildkiteUtils.artifact_upload("*.png")
+        @test keys(BuildkiteUtils.METADATA) == ["aa"]
+        @test BuildkiteUtils.METADATA["aa"] == "hello"
     end
 
-    @show BuildkiteUtils.artifacts("*")
-    sleep(1)
-    @show BuildkiteUtils.artifacts("*")
+    using Plots
+
+    @testset "artifact" begin
+        p = plot(sin, (-3,3))
+        dir = mktempdir()
+        png(p, joinpath(dir, "sin x.png"))
+
+        cd(dir) do
+            BuildkiteUtils.artifact_upload("*.png")
+        end
+
+        @show BuildkiteUtils.artifacts("*")
+    end
+
+
+elseif stage == "stage2"
 
     newdir = mktempdir()
-    BuildkiteUtils.artifact_download("sin x.png", newdir; step=ENV["BUILDKITE_STEP_ID"])
+    BuildkiteUtils.artifact_download("sin x.png", newdir)
     @test readdir(newdir) == ["sin x.png"]
     @test read(joinpath(dir, "sin x.png")) == read(joinpath(newdir, "sin x.png"))
+
+
 end
-
-
-
