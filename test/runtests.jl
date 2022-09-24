@@ -25,28 +25,46 @@ end
 using Plots
 
 @testset "artifact" begin
-
-    @test BuildkiteUtils.artifact_search("*"; step=step) == []
-
-    p = plot(identity, sin, -2pi, 2pi)
     dir = mktempdir()
-    png(p, joinpath(dir, "sin x.png"))
-
     subdir = joinpath(dir, "extra")
     mkpath(subdir)
-    write(joinpath(subdir, "hello.txt"), "hello world")
+    write(joinpath(subdir, "$step.txt"), "hello world")
 
-    cd(dir) do
-        BuildkiteUtils.artifact_upload("*.png")
-        BuildkiteUtils.artifact_upload("**/*.txt")
+    if step == "linux"
+
+        @test BuildkiteUtils.artifact_search("*") == []
+
+        p = plot(identity, sin, -2pi, 2pi)
+        png(p, joinpath(dir, "sin x.png"))
+
+        cd(dir) do
+            BuildkiteUtils.artifact_upload("*.png")
+            BuildkiteUtils.artifact_upload("**/*.txt")
+        end
+
+        @test sort(BuildkiteUtils.artifact_search()) == sort(["sin x.png", "extra/linux.txt"])
+
+        newdir = mktempdir()
+        BuildkiteUtils.artifact_download("*.png", newdir; step=step)
+        @test readdir(newdir) == ["sin x.png"]
+        @test read(joinpath(dir, "sin x.png")) == read(joinpath(newdir, "sin x.png"))
+
+    elseif step == "windows"
+
+        @test sort(BuildkiteUtils.artifact_search()) == sort(["sin x.png", "extra/linux.txt"])
+
+        cd(dir) do
+            BuildkiteUtils.artifact_upload("**/*.txt")
+        end
+
+        @test sort(BuildkiteUtils.artifact_search()) == sort(["sin x.png", "extra/linux.txt", "extra/windows.txt"])
+        @test sort(BuildkiteUtils.artifact_search(); step="linux") == sort(["sin x.png", "extra/linux.txt"])
+        @test sort(BuildkiteUtils.artifact_search(); step="windows") == sort(["extra/windows.txt"])
+
+        newdir = mktempdir()
+        BuildkiteUtils.artifact_download("*.png", newdir; step="linux")
+        @test readdir(newdir) == ["sin x.png"]
     end
-
-    @test sort(BuildkiteUtils.artifact_search(step=step)) == sort(["sin x.png", "extra/hello.txt"])
-
-    newdir = mktempdir()
-    BuildkiteUtils.artifact_download("*.png", newdir; step=step)
-    @test readdir(newdir) == ["sin x.png"]
-    @test read(joinpath(dir, "sin x.png")) == read(joinpath(newdir, "sin x.png"))
 end
 
 @testset "annotation" begin
