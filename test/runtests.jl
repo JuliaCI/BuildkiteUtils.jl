@@ -57,9 +57,9 @@ using Plots
             BuildkiteUtils.artifact_upload("**/*.txt")
         end
 
-        @test sort(BuildkiteUtils.artifact_search()) == sort(["sin x.png", "extra/linux.txt", "extra/windows.txt"])
+        @test sort(BuildkiteUtils.artifact_search()) == sort(["sin x.png", "extra/linux.txt", "extra\\windows.txt"])
         @test sort(BuildkiteUtils.artifact_search(); step="linux") == sort(["sin x.png", "extra/linux.txt"])
-        @test sort(BuildkiteUtils.artifact_search(); step="windows") == sort(["extra/windows.txt"])
+        @test sort(BuildkiteUtils.artifact_search(); step="windows") == sort(["extra\\windows.txt"])
 
         newdir = mktempdir()
         BuildkiteUtils.artifact_download("*.png", newdir; step="linux")
