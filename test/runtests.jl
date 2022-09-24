@@ -33,7 +33,7 @@ if stage == "stage1"
 elseif stage == "stage2"
 
     newdir = mktempdir()
-    BuildkiteUtils.artifact_download("sinx.png", newdir; step="stage1")
+    BuildkiteUtils.artifact_download("**/sinx.png", newdir; step="stage1")
     @test readdir(newdir) == ["sinx.png"]
     @test read(joinpath(dir, "sinx.png")) == read(joinpath(newdir, "sinx.png"))
 
