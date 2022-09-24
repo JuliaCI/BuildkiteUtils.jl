@@ -41,13 +41,14 @@ function artifacts(pattern::AbstractString)
 end
 
 function artifact_download(pattern::AbstractString, destination::AbstractString="."; step=nothing, build=nothing)
-    cmd = `$(agent()) artifact upload $pattern`
+    cmd = `$(agent()) artifact download`
     if !isnothing(step)
         cmd = `$cmd --step $step`
     end
     if !isnothing(build)
         cmd = `$cmd --build $build`
     end
+    cmd = `$cmd $pattern $destination`
     run(cmd)
 end
 
