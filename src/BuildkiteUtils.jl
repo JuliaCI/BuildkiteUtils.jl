@@ -36,8 +36,9 @@ function artifact_upload(pattern::AbstractString)
     run(`$(agent()) artifact upload $pattern`)
 end
 
-function artifact_search(pattern::AbstractString; step=nothing, build=nothing)
-    cmd = `$(agent()) artifact search  --format "%p\n"`
+function artifact_search(pattern::AbstractString="*"; step=nothing, build=nothing)
+    format = "%p\n"
+    cmd = `$(agent()) artifact search  --format $format`
     if !isnothing(step)
         cmd = `$cmd --step $step`
     end

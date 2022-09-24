@@ -31,7 +31,7 @@ if stage == "stage1"
 
         cd(dir) do
             BuildkiteUtils.artifact_upload("*.png")
-            BuildkiteUtils.artifact_upload("**.txt")
+            BuildkiteUtils.artifact_upload("**/*.txt")
         end
 
         @test BuildkiteUtils.artifact_search() == ["sin x.png", "extra/hello.txt"]
