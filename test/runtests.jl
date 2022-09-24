@@ -22,10 +22,13 @@ using Plots
         BuildkiteUtils.artifact_upload("*.png")
     end
 
+    @show BuildkiteUtils.artifacts("*")
+    sleep(1)
+    @show BuildkiteUtils.artifacts("*")
+
     newdir = mktempdir()
     BuildkiteUtils.artifact_download("sinx.png", newdir)
     @test readdir(newdir) == ["sinx.png"]
-    sleep(1)
     @test read(joinpath(dir, "sinx.png")) == read(joinpath(newdir, "sinx.png"))
 end
 
