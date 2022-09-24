@@ -27,7 +27,7 @@ using Plots
     @show BuildkiteUtils.artifacts("*")
 
     newdir = mktempdir()
-    BuildkiteUtils.artifact_download("sinx.png", newdir)
+    BuildkiteUtils.artifact_download("sinx.png", newdir; step=ENV["BUILDKITE_STEP_ID"])
     @test readdir(newdir) == ["sinx.png"]
     @test read(joinpath(dir, "sinx.png")) == read(joinpath(newdir, "sinx.png"))
 end
