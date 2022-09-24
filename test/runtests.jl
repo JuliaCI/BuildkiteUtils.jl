@@ -21,7 +21,7 @@ if stage == "stage1"
 
         @test BuildkiteUtils.artifact_search("*") == []
 
-        p = plot(sin, (-3,3))
+        p = plot(identity, sin, -2pi, 2pi)
         dir = mktempdir()
         png(p, joinpath(dir, "sin x.png"))
 
