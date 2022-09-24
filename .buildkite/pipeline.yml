@@ -1,6 +1,7 @@
 agents:
   queue: juliaecosystem
   arch: x86_64
+  os: linux
 
 steps:
   - label: "Julia 1"
