@@ -45,7 +45,7 @@ function artifact_search(pattern::AbstractString; step=nothing, build=nothing)
         cmd = `$cmd --build $build`
     end
     cmd = `$cmd $pattern`
-    readlines(cmd)
+    readlines(ignorestatus(cmd))
 end
 
 function artifact_download(pattern::AbstractString, destination::AbstractString="."; step=nothing, build=nothing)
