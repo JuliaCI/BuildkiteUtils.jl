@@ -36,8 +36,16 @@ function artifact_upload(pattern::AbstractString)
     run(`$(agent()) artifact upload $pattern`)
 end
 
-function artifacts(pattern::AbstractString)
-    readlines(`$(agent()) artifact search $pattern`)
+function artifact_search(pattern::AbstractString; step=nothing, build=nothing)
+    cmd = `$(agent()) artifact search  --format "%p\n"`
+    if !isnothing(step)
+        cmd = `$cmd --step $step`
+    end
+    if !isnothing(build)
+        cmd = `$cmd --build $build`
+    end
+    cmd = `$cmd $pattern`
+    readlines(cmd)
 end
 
 function artifact_download(pattern::AbstractString, destination::AbstractString="."; step=nothing, build=nothing)

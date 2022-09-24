@@ -18,6 +18,9 @@ if stage == "stage1"
     using Plots
 
     @testset "artifact" begin
+
+        @test BuildkiteUtils.artifact_search("*") == []
+
         p = plot(sin, (-3,3))
         dir = mktempdir()
         png(p, joinpath(dir, "sin x.png"))
@@ -26,7 +29,7 @@ if stage == "stage1"
             BuildkiteUtils.artifact_upload("*.png")
         end
 
-        @show BuildkiteUtils.artifacts("*")
+        @test BuildkiteUtils.artifact_search("*") == ["sin x.png"]
 
         newdir = mktempdir()
         BuildkiteUtils.artifact_download("*.png", newdir)
