@@ -25,11 +25,16 @@ if stage == "stage1"
         dir = mktempdir()
         png(p, joinpath(dir, "sin x.png"))
 
+        subdir = joinpath(dir, "extra")
+        mkpath(subdir)
+        write(joinpath(subdir, "hello.txt"), "hello world")
+
         cd(dir) do
             BuildkiteUtils.artifact_upload("*.png")
+            BuildkiteUtils.artifact_upload("**.txt")
         end
 
-        @test BuildkiteUtils.artifact_search("*") == ["sin x.png"]
+        @test BuildkiteUtils.artifact_search() == ["sin x.png", "extra/hello.txt"]
 
         newdir = mktempdir()
         BuildkiteUtils.artifact_download("*.png", newdir)
