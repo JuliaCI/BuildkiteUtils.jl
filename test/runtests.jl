@@ -34,7 +34,7 @@ if stage == "stage1"
             BuildkiteUtils.artifact_upload("**/*.txt")
         end
 
-        @test BuildkiteUtils.artifact_search() == ["sin x.png", "extra/hello.txt"]
+        @test sort(BuildkiteUtils.artifact_search()) == sort(["sin x.png", "extra/hello.txt"])
 
         newdir = mktempdir()
         BuildkiteUtils.artifact_download("*.png", newdir)
@@ -42,6 +42,18 @@ if stage == "stage1"
         @test read(joinpath(dir, "sin x.png")) == read(joinpath(newdir, "sin x.png"))
     end
 
+    @testset "annotation" begin
+        BuildkiteUtils.annotate("""
+        Default annotation
+
+        <img src="artifact://sin x.png" alt="sin(x)" height=250 >
+
+        """)
+
+        BuildkiteUtils.annotate("Success"; style="success", context="xtra")
+
+        BuildkiteUtils.annotate("and some more"; append=true)
+    end
 
 elseif stage == "stage2"
 
