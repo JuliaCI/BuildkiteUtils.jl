@@ -1,22 +1,32 @@
 using BuildkiteUtils, Test
 
+step = ENV["BUILDKITE_STEP_KEY"]
 
 @test success(`$(BuildkiteUtils.agent()) --version`)
 
 @testset "meta-data" begin
-    @test isempty(keys(BuildkiteUtils.METADATA))
+    if step == "linux"
+        @test keys(BuildkiteUtils.METADATA) == []
+    elseif step == "windows"
+        @test keys(BuildkiteUtils.METADATA) == ["aa-linux"]
+        @test BuildkiteUtils.METADATA["aa-linux"] == "hello"
+    end
 
-    BuildkiteUtils.METADATA["aa"] = "hello"
+    BuildkiteUtils.METADATA["aa-$step"] = "hello"
 
-    @test keys(BuildkiteUtils.METADATA) == ["aa"]
-    @test BuildkiteUtils.METADATA["aa"] == "hello"
+    if step == "linux"
+        @test keys(BuildkiteUtils.METADATA) == ["aa-linux"]
+    elseif step == "windows"
+        @test keys(BuildkiteUtils.METADATA) == ["aa-linux", "aa-windows"]
+    end
+    @test BuildkiteUtils.METADATA["aa-$step"] == "hello"
 end
 
 using Plots
 
 @testset "artifact" begin
 
-    @test BuildkiteUtils.artifact_search("*") == []
+    @test BuildkiteUtils.artifact_search("*"; step=step) == []
 
     p = plot(identity, sin, -2pi, 2pi)
     dir = mktempdir()
@@ -31,23 +41,24 @@ using Plots
         BuildkiteUtils.artifact_upload("**/*.txt")
     end
 
-    @test sort(BuildkiteUtils.artifact_search()) == sort(["sin x.png", "extra/hello.txt"])
+    @test sort(BuildkiteUtils.artifact_search(step=step)) == sort(["sin x.png", "extra/hello.txt"])
 
     newdir = mktempdir()
-    BuildkiteUtils.artifact_download("*.png", newdir)
+    BuildkiteUtils.artifact_download("*.png", newdir; step=step)
     @test readdir(newdir) == ["sin x.png"]
     @test read(joinpath(dir, "sin x.png")) == read(joinpath(newdir, "sin x.png"))
 end
 
 @testset "annotation" begin
-    BuildkiteUtils.annotate("""
-    Default annotation
+    if step == "linux"
+        BuildkiteUtils.annotate("""
+        Hello from :linux:
 
-    <img src="artifact://sin x.png" alt="sin(x)" height=250 >
+        <img src="artifact://sin x.png" alt="sin(x)" height=250 >
 
-    """)
-
-    BuildkiteUtils.annotate("Success"; style="success", context="xtra")
-
-    BuildkiteUtils.annotate("and some more"; append=true)
+        """)
+        BuildkiteUtils.annotate("Success"; style="success", context="xtra")
+    elseif step == "windows"
+        BuildkiteUtils.annotate("and from :windows:\n"; append=true)
+    end
 end

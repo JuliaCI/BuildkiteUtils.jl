@@ -3,7 +3,8 @@ agents:
   arch: x86_64
 
 steps:
-  - label: "Julia 1"
+  - label: ":linux:"
+    key: "linux"
     plugins:
       - JuliaCI/julia#v1:
           version: "1"
@@ -15,7 +16,10 @@ steps:
     agents:
       os: linux
 
-  - label: "Julia 1"
+  - wait
+
+  - label: ":windows:"
+    key: "windows"
     plugins:
       - JuliaCI/julia#v1:
           version: "1"
