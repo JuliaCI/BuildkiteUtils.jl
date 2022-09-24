@@ -23,8 +23,9 @@ using Plots
     end
 
     newdir = mktempdir()
-    BuildkiteUtils.artifact_download("*.png", newdir)
+    BuildkiteUtils.artifact_download("sinx.png", newdir)
     @test readdir(newdir) == ["sinx.png"]
+    sleep(1)
     @test read(joinpath(dir, "sinx.png")) == read(joinpath(newdir, "sinx.png"))
 end
 

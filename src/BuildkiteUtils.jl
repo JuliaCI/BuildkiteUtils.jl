@@ -46,5 +46,21 @@ function artifact_download(pattern::AbstractString, destination::AbstractString=
     run(cmd)
 end
 
+# annotation
+
+function annotate(data; context=nothing, style=nothing, append=false)
+    cmd = `$(agent()) annotate`
+    if !isnothing(context)
+        cmd = `$cmd --context $context`
+    end
+    if !isnothing(style)
+        cmd = `$cmd --style $style`
+    end
+    if append
+        cmd = `$cmd --append`
+    end
+    run(pipeline(cmd, stdin=IOBuffer(string(data))))
+end
+
 
 end # module BuildkiteUtils
