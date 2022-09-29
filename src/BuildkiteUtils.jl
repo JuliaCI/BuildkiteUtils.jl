@@ -61,8 +61,7 @@ end
 List all uploaded artifacts matching `pattern`.
 
 Optional keyword arguments
- - `step` will limit to artifacts in a given `step` (either the key or the step
-ID),
+ - `step` will limit to artifacts in a given `step` (either the key or the step ID),
  - `build` allows downloading artifact from a given build ID.
 
 """
@@ -86,8 +85,7 @@ end
 Download all artifacts matching `pattern` to `destination`.
 
 Optional keyword arguments
- - `step` will limit to artifacts in a given `step` (either the key or the step
-ID),
+ - `step` will limit to artifacts in a given `step` (either the key or the step ID),
  - `build` allows downloading artifact from a given build ID.
 
 """
