@@ -3,20 +3,46 @@ agents:
   arch: x86_64
 
 steps:
-  - label: ":linux:"
-    key: "linux"
+  - label: ":linux: latest"
+    key: "linux-latest"
     plugins:
       - JuliaCI/julia#v1:
           version: "1"
       - JuliaCI/julia-test#v1:
           coverage: false
-    timeout_in_minutes: 60
+    timeout_in_minutes: 15
     # Don't run Buildkite if the commit message includes the text [skip tests]
     if: build.message !~ /\[skip tests\]/
     agents:
       os: linux
 
   - wait
+
+  - label: ":linux: v1.6"
+    key: "linux-min"
+    plugins:
+      - JuliaCI/julia#v1:
+          version: "1.6"
+      - JuliaCI/julia-test#v1:
+          coverage: false
+    timeout_in_minutes: 15
+    # Don't run Buildkite if the commit message includes the text [skip tests]
+    if: build.message !~ /\[skip tests\]/
+    agents:
+      os: linux
+
+  - label: ":macos:"
+    key: "macos"
+    plugins:
+      - JuliaCI/julia#v1:
+          version: "1"
+      - JuliaCI/julia-test#v1:
+          coverage: false
+    timeout_in_minutes: 15
+    # Don't run Buildkite if the commit message includes the text [skip tests]
+    if: build.message !~ /\[skip tests\]/
+    agents:
+      os: macos
 
   - label: ":windows:"
     key: "windows"
@@ -25,7 +51,7 @@ steps:
           version: "1"
       - JuliaCI/julia-test#v1:
           coverage: false
-    timeout_in_minutes: 60
+    timeout_in_minutes: 15
     # Don't run Buildkite if the commit message includes the text [skip tests]
     if: build.message !~ /\[skip tests\]/
     agents:
