@@ -22,6 +22,7 @@ x = BuildkiteUtils.METADATA[key]   # get meta-data
 BuildkiteUtils.METADATA[key] = val # set meta-data
 keys(BuildkiteUtils.METADATA)      # list of meta-data keys
 haskey(BuildkiteUtils.METADATA)    # check if key exists
+```
 """
 const METADATA = MetaDataDict()
 
