@@ -41,23 +41,23 @@ using Plots
         @test BuildkiteUtils.artifact_search("*") == []
 
         p = plot(identity, sin, -2pi, 2pi)
-        png(p, joinpath(dir, "sin x.png"))
+        svg(p, joinpath(dir, "sin x.svg"))
 
         cd(dir) do
-            BuildkiteUtils.artifact_upload("*.png")
+            BuildkiteUtils.artifact_upload("*.svg")
             BuildkiteUtils.artifact_upload("**/*.txt")
         end
 
-        @test sort(BuildkiteUtils.artifact_search()) == sort(["sin x.png", "extra/step.txt"])
+        @test sort(BuildkiteUtils.artifact_search()) == sort(["sin x.svg", "extra/step.txt"])
 
         newdir = mktempdir()
-        BuildkiteUtils.artifact_download("*.png", newdir; step=step)
-        @test readdir(newdir) == ["sin x.png"]
-        @test read(joinpath(dir, "sin x.png")) == read(joinpath(newdir, "sin x.png"))
+        BuildkiteUtils.artifact_download("*.svg", newdir; step=step)
+        @test readdir(newdir) == ["sin x.svg"]
+        @test read(joinpath(dir, "sin x.svg")) == read(joinpath(newdir, "sin x.svg"))
 
     else
 
-        @test sort(BuildkiteUtils.artifact_search(step="linux-latest")) == sort(["sin x.png", "extra/step.txt"])
+        @test sort(BuildkiteUtils.artifact_search(step="linux-latest")) == sort(["sin x.svg", "extra/step.txt"])
         @test isempty(BuildkiteUtils.artifact_search(step=step))
 
         cd(dir) do
@@ -71,8 +71,8 @@ using Plots
         end
 
         newdir = mktempdir()
-        BuildkiteUtils.artifact_download("*.png", newdir; step="linux-latest")
-        @test readdir(newdir) == ["sin x.png"]
+        BuildkiteUtils.artifact_download("*.svg", newdir; step="linux-latest")
+        @test readdir(newdir) == ["sin x.svg"]
     end
 end
 
@@ -82,7 +82,7 @@ end
         BuildkiteUtils.annotate("""
         Success!
 
-        <img src="artifact://sin x.png" alt="sin(x)" height=250 >
+        <img src="artifact://sin x.svg" alt="sin(x)" height=250 >
         """; style="success", context="xtra")
 
     elseif step == "linux-v1.6"
