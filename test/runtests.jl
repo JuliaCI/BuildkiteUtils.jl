@@ -30,6 +30,8 @@ end
 
 using Plots
 
+plotly()
+
 @testset "artifact" begin
     dir = mktempdir()
     subdir = joinpath(dir, "extra")
@@ -39,16 +41,19 @@ using Plots
     if step == "linux-latest"
 
         @test BuildkiteUtils.artifact_search("*") == []
+        X = range(-2pi,2pi,length=30)
+        p = plot(X, sin.(X))
 
-        p = plot(identity, sin, -2pi, 2pi)
-        svg(p, joinpath(dir, "sin x.svg"))
+        savefig(p, joinpath(dir, "sin x.html"))
+        savefig(p, joinpath(dir, "sin x.svg"))
 
         cd(dir) do
             BuildkiteUtils.artifact_upload("*.svg")
+            BuildkiteUtils.artifact_upload("*.html")
             BuildkiteUtils.artifact_upload("**/*.txt")
         end
 
-        @test sort(BuildkiteUtils.artifact_search()) == sort(["sin x.svg", "extra/step.txt"])
+        @test sort(BuildkiteUtils.artifact_search()) == sort(["sin x.html", "sin x.svg", "extra/step.txt"])
 
         newdir = mktempdir()
         BuildkiteUtils.artifact_download("*.svg", newdir; step=step)
@@ -57,7 +62,7 @@ using Plots
 
     else
 
-        @test sort(BuildkiteUtils.artifact_search(step="linux-latest")) == sort(["sin x.svg", "extra/step.txt"])
+        @test sort(BuildkiteUtils.artifact_search(step="linux-latest")) == sort(["sin x.html", "sin x.svg", "extra/step.txt"])
         @test isempty(BuildkiteUtils.artifact_search(step=step))
 
         cd(dir) do
@@ -83,6 +88,8 @@ end
         Success!
 
         <img src="artifact://sin x.svg" alt="sin(x)" height=250 >
+
+        <iframe src="artifact://sin x.html" title="sin(x)"></iframe> 
         """; style="success", context="xtra")
 
     elseif step == "linux-v1.6"
