@@ -87,9 +87,7 @@ end
         BuildkiteUtils.annotate("""
         Success!
 
-        <img src="artifact://sin x.svg" alt="sin(x)" height=250 >
-
-        <iframe src="artifact://sin x.html" title="sin(x)"></iframe> 
+         <a href="artifact://sin x.html"><img src="artifact://sin x.svg" alt="sin(x)" height=250 ></a>
         """; style="success", context="xtra")
 
     elseif step == "linux-v1.6"
