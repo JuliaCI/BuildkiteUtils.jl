@@ -85,8 +85,8 @@ end
         <img src="artifact://sin x.png" alt="sin(x)" height=250 >
         """; style="success", context="xtra")
 
-    elseif step == "linux-v1.6"
-        BuildkiteUtils.annotate("and from :linux: v1.6\n\n"; append=true)
+    elseif step == "linux-min"
+        BuildkiteUtils.annotate("and from :linux: v1.10\n\n"; append=true)
     elseif step == "windows"
         BuildkiteUtils.annotate("and from :windows:\n\n"; append=true)
     elseif step == "macos"

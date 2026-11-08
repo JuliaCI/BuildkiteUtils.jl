@@ -1,6 +1,14 @@
+# The tests exercise the real `buildkite-agent` (meta-data, artifacts and
+# annotations shared between steps), so they only run on Buildkite. The steps
+# after `wait` read what `linux-latest` stored; test/runtests.jl branches on
+# each step's `key`.
 agents:
-  queue: juliaecosystem
-  arch: x86_64
+  queue: "test"
+  arch: "x86_64"
+  sched_cpus: "1"
+  sched_cpus_limit: "4"
+  sched_mem_gib: "4"
+  sched_mem_limit_gib: "8"
 
 steps:
   - label: ":linux: latest"
@@ -10,26 +18,27 @@ steps:
           version: "1"
       - JuliaCI/julia-test#v1:
           coverage: false
-    timeout_in_minutes: 15
+    timeout_in_minutes: 20
     # Don't run Buildkite if the commit message includes the text [skip tests]
     if: build.message !~ /\[skip tests\]/
     agents:
-      os: linux
+      os: "linux"
+      sandbox_capable: "true"
 
   - wait
 
-  - label: ":linux: v1.6"
+  - label: ":linux: v1.10"
     key: "linux-min"
     plugins:
       - JuliaCI/julia#v1:
-          version: "1.6"
+          version: "1.10"
       - JuliaCI/julia-test#v1:
           coverage: false
-    timeout_in_minutes: 15
-    # Don't run Buildkite if the commit message includes the text [skip tests]
+    timeout_in_minutes: 20
     if: build.message !~ /\[skip tests\]/
     agents:
-      os: linux
+      os: "linux"
+      sandbox_capable: "true"
 
   - label: ":macos:"
     key: "macos"
@@ -38,11 +47,10 @@ steps:
           version: "1"
       - JuliaCI/julia-test#v1:
           coverage: false
-    timeout_in_minutes: 15
-    # Don't run Buildkite if the commit message includes the text [skip tests]
+    timeout_in_minutes: 20
     if: build.message !~ /\[skip tests\]/
     agents:
-      os: macos
+      os: "macos"
 
   - label: ":windows:"
     key: "windows"
@@ -51,8 +59,7 @@ steps:
           version: "1"
       - JuliaCI/julia-test#v1:
           coverage: false
-    timeout_in_minutes: 15
-    # Don't run Buildkite if the commit message includes the text [skip tests]
+    timeout_in_minutes: 20
     if: build.message !~ /\[skip tests\]/
     agents:
-      os: windows
+      os: "windows"
