@@ -4,9 +4,12 @@ step = ENV["BUILDKITE_STEP_KEY"]
 
 @test success(`$(BuildkiteUtils.agent()) --version`)
 
+# The agent or scheduler may add its own meta-data keys; only look at ours.
+test_keys() = filter(startswith("test-"), collect(keys(BuildkiteUtils.METADATA)))
+
 @testset "meta-data" begin
     if step == "linux-latest"
-        @test keys(BuildkiteUtils.METADATA) == []
+        @test test_keys() == []
         @test !haskey(BuildkiteUtils.METADATA, "test-linux-latest")
     else
         @test "test-linux-latest" in keys(BuildkiteUtils.METADATA)
@@ -17,7 +20,7 @@ step = ENV["BUILDKITE_STEP_KEY"]
     BuildkiteUtils.METADATA["test-$step"] = "hello"
 
     if step == "linux-latest"
-        @test keys(BuildkiteUtils.METADATA) == ["test-linux-latest"]
+        @test test_keys() == ["test-linux-latest"]
         @test haskey(BuildkiteUtils.METADATA, "test-linux-latest")
     else
         @test haskey(BuildkiteUtils.METADATA, "test-linux-latest")
