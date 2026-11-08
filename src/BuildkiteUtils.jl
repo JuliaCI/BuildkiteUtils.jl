@@ -66,8 +66,11 @@ Optional keyword arguments
 
 """
 function artifact_search(pattern::AbstractString="*"; step=nothing, build=nothing)
-    format = "%p\n"
-    cmd = `$(agent()) artifact search  --format $format`
+    # Since buildkite-agent 3.109.1 the format is unescaped like a Go string
+    # literal, so pass a literal `\n` (a real newline makes it fail to parse).
+    # Older agents print it verbatim, hence also splitting on `\n` below.
+    format = "%p\\n"
+    cmd = `$(agent()) artifact search --format $format`
     if !isnothing(step)
         cmd = `$cmd --step $step`
     end
@@ -75,7 +78,8 @@ function artifact_search(pattern::AbstractString="*"; step=nothing, build=nothin
         cmd = `$cmd --build $build`
     end
     cmd = `$cmd $pattern`
-    readlines(ignorestatus(cmd))
+    output = replace(read(ignorestatus(cmd), String), "\\n" => "\n")
+    String.(filter(!isempty, split(output, '\n')))
 end
 
 """
